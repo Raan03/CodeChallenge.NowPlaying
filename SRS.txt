@@ -1,0 +1,89 @@
+﻿TMDB Client Application
+
+Software Requirements Specification
+
+Purpose
+
+Build an application which allows users to browse movies, gather information about each movie, and save a list of their favorite movies. The application should allow users to search for movies, browse by popular movies, or browse movies currently in theaters.
+
+Technology
+
+This application will be built using C# and .NET 8 or newer with Blazor WebAssembly. The application will use The Movie Database (TMDB) API to acquire the necessary information regarding movies and use the browser's Local Storage to save user-specific data. The user interface will be built using Bootstrap and any additional HTML, CSS, and JavaScript required to meet the project requirements.
+
+Requirements
+
+The requirements for this application are split into two broad categories: Feature Requirements and User Interface Requirements. Feature requirements describe the functionality of the application; the things the end user must be able to do. User Interface requirements describe aspects of the application that facilitate intuitive and user-friendly interaction. A functional application that is hard to use will struggle to reach an audience as will an attractively-designed application that is not reliably functional.
+
+Feature Requirements
+
+Browse Movies
+
+Movie data must be retrieved through the TMDB API
+
+Ability to browse movies that are currently popular
+
+Ability to browse movies that are currently playing in theaters
+
+Ability to browse movies by searching for movie titles
+
+Favorite Movies
+
+Ability to save any movie to the user's list of favorites
+
+Ability to remove any movie from the user's list of favorites
+
+Ability to view the user's full list of favorite movies
+
+Favorite movies should be stored in the browsers Local Storage
+
+Movie Details
+
+The ability to view detailed information about any movie, including (when available):
+
+The movie's title, tagline, and poster
+
+An overview of the movie
+
+The movie's release date
+
+The movie's run time
+
+Genres applicable to the movie
+
+An overall rating, as reviewed by users
+
+The movie trailer
+
+The movie's actors and the character they portrayed
+
+Security
+
+The access token used to access the TMDB API should not be leaked to the user's browser
+
+User Interface Requirements
+
+The application should have a Bootstrap based template
+
+There should be a consistent theme and custom branding for the application
+
+Navigation menu should be present on all pages
+
+Users should be able to easily navigate every feature of the application through the UI
+
+The application should be responsive and easy to use on mobile, tablet, and desktop browsers
+
+The application should use WebAssembly rendering to generate the HTML displayed for the user
+
+Pages should gracefully handle all page states that may occur, including but not limited to:
+
+Loading states
+
+Error states (e.g. failure to communicate with TMDB or exceptions thrown from application code)
+
+Not Found states (e.g. invalid URLs)
+
+Limitations
+
+Because this is a client-side app and the specification does not include a custom database or back end, the user's favorite movies are only persisted in the user's browser. As a result, the user's favorite movies will be unique to each device and browser they use to visit the application. Users will not be able to view the list of favorites created on their desktop from their smartphone or vice versa.
+
+Because this application retrieves its data from the TMDB API, it is almost completely dependent on the availability of the TMDB's services. If TMDB is unavailable, users will only be able to view the list of favorite movies currently stored by their browser.

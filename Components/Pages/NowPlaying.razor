@@ -51,9 +51,9 @@
         {
             nowPlayingMovies = await tmdbService.GetNowPlayingMoviesAsync(1, cts.Token);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            Console.WriteLine(ex.Message);
         }
         finally
         {

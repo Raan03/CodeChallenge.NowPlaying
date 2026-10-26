@@ -1,6 +1,6 @@
 ﻿using CodeChallenge.NowPlaying.Models;
 
-namespace CodeChallenge.NowPlaying.Services
+namespace CodeChallenge.NowPlaying.Services.Contracts
 {
     public interface ITmdbService
     {

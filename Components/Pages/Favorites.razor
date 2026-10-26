@@ -1,4 +1,6 @@
 ﻿@page "/favorites"
+@implements IDisposable
+
 <PageTitle>Favorites</PageTitle>
 
 <div class="container-xxl py-3">
@@ -9,8 +11,48 @@
     <p class="lead italic">
         Movies that you have currently marked as favorites.
     </p>
+    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+        @if (favoriteMovies is null)
+        {
+            <div class="d-flex justify-content-center align-items-center">
+                @if (isLoading)
+                {
+                    <h2 class="text-muted">Loading...</h2>
+                }
+                else
+                {
+                    <h2 class="text-muted">Failed to load...</h2>
+                }
+            </div>
+        }
+        else
+        {
+            @foreach (var movie in favoriteMovies)
+            {
+                <div class="col">
+                    <MovieCard Movie="@movie" />
+                </div>
+            }
+        }
+    </div>
 </div>
 
 @code {
+    List<MovieResponse>? favoriteMovies;
+    bool isLoading = true;
+    CancellationTokenSource cts = new CancellationTokenSource();
 
+    protected override async Task OnParametersSetAsync()
+    {
+        // load favorites from localStorage service
+    }
+
+    public void Dispose()
+    {
+        if (cts != null)
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
+    }
 }

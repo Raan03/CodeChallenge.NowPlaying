@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Net.Http.Json;
 using static System.Net.WebRequestMethods;
+using CodeChallenge.NowPlaying.Services.Contracts;
 
 namespace CodeChallenge.NowPlaying.Services
 {

@@ -1,3 +1,4 @@
+using CodeChallenge.NowPlaying.Services.Contracts;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -12,7 +13,8 @@ namespace CodeChallenge.NowPlaying
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddScoped<Services.ITmdbService, Services.TmdbService>();
+            builder.Services.AddScoped<ITmdbService, Services.TmdbService>();
+            builder.Services.AddScoped<ILocalStorageService, Services.LocalStorageService>();
             await builder.Build().RunAsync();
         }
     }

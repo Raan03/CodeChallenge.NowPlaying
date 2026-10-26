@@ -10,6 +10,14 @@
         Browse movies that are now playing in theatres. Data provided by
         <a href="https://www.themoviedb.org/" class="link-warning">The Movie DB</a> API.
     </p>
+    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+        @for (int i = 1; i <= 20; i++)
+        {
+            <div class="col">
+                <MovieCard />
+            </div>
+        }
+    </div>
 </div>
 
 

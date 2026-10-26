@@ -12,7 +12,7 @@ namespace CodeChallenge.NowPlaying
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
+            builder.Services.AddScoped<Services.ITmdbService, Services.TmdbService>();
             await builder.Build().RunAsync();
         }
     }

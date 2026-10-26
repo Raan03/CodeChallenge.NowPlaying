@@ -1,11 +1,11 @@
 ﻿<div class="movieCard card h-100">
-    <img src="/img/poster.png" alt="movie poster" class="card-img-top" />
+    <img src="@Movie.PosterPath" alt="movie poster" class="card-img-top" />
     <div class="card-bodyborder-top">
         <div class="card-title fw-bold lh-1">
-            Movie Title
+            @Movie.Title
         </div>
         <div class="card-text lh-1 fst-italic">
-            Release date: 2023-01-01
+            Release Date:@Movie.ReleaseDate
         </div>
     </div>
     <div class="movieCardFooter card-footer d-flex justify-content-between">
@@ -14,5 +14,6 @@
     </div>
 </div>
 @code {
-
+    [Parameter, EditorRequired]
+    public MovieResponse Movie { get; set; } = new MovieResponse();
 }

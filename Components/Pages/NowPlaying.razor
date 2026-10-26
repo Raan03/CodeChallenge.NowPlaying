@@ -63,8 +63,11 @@
 
     public void Dispose()
     {
-        cts.Cancel();
-        cts.Dispose();
+        if (cts != null)
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
     }
 
 }

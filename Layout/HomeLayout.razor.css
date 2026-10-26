@@ -1,0 +1,6 @@
+/* CSS for HomeLayout component */
+.homeStyle {
+    background: linear-gradient(to right, rgba(181,53,132,.95) 0%, rgba(8,7,102, .80) 40%, rgba(8,7,102,.95) 100%),
+        url("/img/NowPlayingBG.jpg");
+    color: var(--cf-light-color);
+}

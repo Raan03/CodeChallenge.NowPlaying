@@ -22,9 +22,9 @@ namespace CodeChallenge.NowPlaying.Services
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
         }
 
-        public async Task<NowPlayingResponseModel> GetNowPlayingMoviesAsync(int pageNumber)
+        public async Task<NowPlayingResponseModel> GetNowPlayingMoviesAsync(int pageNumber, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetFromJsonAsync<NowPlayingResponseModel>($"{url}&page={pageNumber}", jsonOptions) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch now playing movies.");
+            var response = await _httpClient.GetFromJsonAsync<NowPlayingResponseModel>($"{url}&page={pageNumber}", jsonOptions, cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch now playing movies.");
 
             foreach (var movie in response.Results)
             {

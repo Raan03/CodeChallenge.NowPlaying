@@ -1,6 +1,6 @@
 ﻿@page "/now-playing"
 <PageTitle>Now Playing</PageTitle>
-
+@implements IDisposable
 @inject ITmdbService tmdbService
 
 <div class="container-xxl py-3">
@@ -41,6 +41,7 @@
 
 @code {
     private NowPlayingResponseModel? nowPlayingMovies = null;
+    private CancellationTokenSource cts = new CancellationTokenSource();
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
@@ -48,7 +49,7 @@
 
         try
         {
-            nowPlayingMovies = await tmdbService.GetNowPlayingMoviesAsync(1);
+            nowPlayingMovies = await tmdbService.GetNowPlayingMoviesAsync(1, cts.Token);
         }
         catch (Exception)
         {
@@ -58,6 +59,12 @@
         {
             isLoading = false;
         }
+    }
+
+    public void Dispose()
+    {
+        cts.Cancel();
+        cts.Dispose();
     }
 
 }

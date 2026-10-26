@@ -4,6 +4,6 @@ namespace CodeChallenge.NowPlaying.Services
 {
     public interface ITmdbService
     {
-        Task<NowPlayingResponseModel> GetNowPlayingMoviesAsync(int pageNumber);
+        Task<NowPlayingResponseModel> GetNowPlayingMoviesAsync(int pageNumber, CancellationToken cancellationToken = default);
     }
 }

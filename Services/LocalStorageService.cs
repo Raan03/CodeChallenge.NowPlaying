@@ -14,25 +14,37 @@ namespace CodeChallenge.NowPlaying.Services
             _jSRuntime = jSRuntime;
         }
 
+        /// <summary>
+        /// Saves the favorites to LocalStorage
+        /// </summary>
+        /// <param name="movies"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task SaveFavoritesAsync(List<MovieResponse> movies, CancellationToken cancellationToken = default)
         {
             try
             {
                 var json = System.Text.Json.JsonSerializer.Serialize(movies);
-                await _jSRuntime.InvokeVoidAsync("localStorage.setItem", _localStorageKeyFavorites, json, cancellationToken);
+                await _jSRuntime.InvokeVoidAsync(identifier: "localStorage.setItem", cancellationToken: cancellationToken, args: [_localStorageKeyFavorites, json]);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error saving favorites to local storage: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Retrieves the Favorites from Local Storage
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<List<MovieResponse>> GetFavoritesAsync(CancellationToken cancellationToken = default)
         {
             List<MovieResponse> movies = new List<MovieResponse>();
 
             try
             {
-                var result = await _jSRuntime.InvokeAsync<string>("localStorage.getItem", _localStorageKeyFavorites, cancellationToken);
+                var result = await _jSRuntime.InvokeAsync<string>(identifier: "localStorage.getItem", cancellationToken: cancellationToken, args: [_localStorageKeyFavorites] );
 
                 if (!string.IsNullOrEmpty(result))
                 {
@@ -48,6 +60,13 @@ namespace CodeChallenge.NowPlaying.Services
 
             return movies;
         }
+
+        /// <summary>
+        /// Add a movie to the favorites list in localStorage
+        /// </summary>
+        /// <param name="movieResponse"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task AddFavoriteAsync(MovieResponse movieResponse, CancellationToken cancellationToken = default)
         {
             var favorites = await GetFavoritesAsync(cancellationToken);
@@ -56,6 +75,32 @@ namespace CodeChallenge.NowPlaying.Services
                 favorites.Add(movieResponse);
                 await SaveFavoritesAsync(favorites, cancellationToken);
             }
+        }
+
+        /// <summary>
+        /// Removes a movie from favorites list in localStorage
+        /// </summary>
+        /// <param name="movie"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task RemoveFavoriteAsync(MovieResponse movie, CancellationToken cancellationToken = default)
+        {
+            var favorites = await GetFavoritesAsync(cancellationToken);
+            favorites = favorites.Where(d => d.Id != movie.Id).ToList();
+            await SaveFavoritesAsync(favorites, cancellationToken);
+        }
+
+        /// <summary>
+        /// Is a certain movieId in our favoriteslist?
+        /// </summary>
+        /// <param name="movieId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<bool> IsFavoriteAsync(int movieId, CancellationToken cancellationToken = default)
+        {
+            var favorites = await GetFavoritesAsync(cancellationToken);
+            
+            return favorites.Any(m => m.Id == movieId);
         }
     }
 }

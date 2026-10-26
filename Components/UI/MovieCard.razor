@@ -1,4 +1,7 @@
-﻿<div class="movieCard card h-100">
+﻿@inject ILocalStorageService localStorageService
+@implements IDisposable
+
+<div class="movieCard card h-100">
     <img src="@Movie.PosterPath" alt="movie poster" class="card-img-top" />
     <div class="card-bodyborder-top">
         <div class="card-title fw-bold lh-1">
@@ -9,11 +12,55 @@
         </div>
     </div>
     <div class="movieCardFooter card-footer d-flex justify-content-between">
-        <button class="btn btn-primary">Add Favorite</button>
+        <button class="btn btn-outline-primary" @onclick="HandleFavoriteToggle">
+            @(isFavorite ? "- Favorite" : "+ Favorite")
+        </button>
         <a href="/moviedetail" class="btn btn-primary">View Details</a>
     </div>
 </div>
 @code {
     [Parameter, EditorRequired]
     public MovieResponse Movie { get; set; } = new MovieResponse();
+    [Parameter]
+    public EventCallback OnChange { get; set; }
+
+    private CancellationTokenSource cts = new CancellationTokenSource();
+    bool isFavorite = false;
+
+    public async Task HandleFavoriteToggle()
+    {
+        if (Movie == null)
+        {
+            return;
+        }
+
+        if (isFavorite)
+        {
+            await localStorageService.RemoveFavoriteAsync(Movie, cts.Token);
+            isFavorite = false;
+        }
+        else
+        {
+            await localStorageService.AddFavoriteAsync(Movie, cts.Token);
+            isFavorite = true;
+        }
+
+        await OnChange.InvokeAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Movie is not null)
+        {
+            isFavorite = await localStorageService.IsFavoriteAsync(Movie.Id);
+        }
+    }
+
+    public void Dispose()
+    {
+        if (cts != null)
+        {
+            cts.Dispose();
+        }
+    }
 }

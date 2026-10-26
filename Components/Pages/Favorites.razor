@@ -1,5 +1,6 @@
 ﻿@page "/favorites"
 @implements IDisposable
+@inject ILocalStorageService localStorageService
 
 <PageTitle>Favorites</PageTitle>
 
@@ -30,7 +31,7 @@
             @foreach (var movie in favoriteMovies)
             {
                 <div class="col">
-                    <MovieCard Movie="@movie" />
+                    <MovieCard Movie="@movie" OnChange="OnParametersSetAsync" />
                 </div>
             }
         }
@@ -45,6 +46,18 @@
     protected override async Task OnParametersSetAsync()
     {
         // load favorites from localStorage service
+        try
+        {
+            favoriteMovies = await localStorageService.GetFavoritesAsync(cts.Token);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     public void Dispose()

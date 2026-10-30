@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Net.Http.Json;
 using static System.Net.WebRequestMethods;
 using CodeChallenge.NowPlaying.Services.Contracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace CodeChallenge.NowPlaying.Services
 {
@@ -26,9 +27,9 @@ namespace CodeChallenge.NowPlaying.Services
         {
             string url = "https://api.themoviedb.org/3/movie/now_playing?region=BE&language=nl-BE";
 
-            var response = await _httpClient.GetFromJsonAsync<NowPlayingResponseModel>($"{url}&page={pageNumber}", jsonOptions, cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch now playing movies.");
+            var response = await _httpClient.GetFromJsonAsync<NowPlayingResponseModel>(requestUri: $"{url}&page={pageNumber}", options: jsonOptions, cancellationToken: cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch now playing movies.");
 
-            PopulatePosterPaths(response);
+            PopulatePosterPaths(response.Results);
 
             return response;
         }
@@ -37,25 +38,42 @@ namespace CodeChallenge.NowPlaying.Services
         {
             string url = "https://api.themoviedb.org/3/movie/popular?region=BE&language=nl-BE";
 
-            var response = await _httpClient.GetFromJsonAsync<NowPlayingResponseModel>($"{url}&page={pageNumber}", jsonOptions, cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch popular movies.");
+            var response = await _httpClient.GetFromJsonAsync<NowPlayingResponseModel>(requestUri: $"{url}&page={pageNumber}", options: jsonOptions, cancellationToken: cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch popular movies.");
 
-            PopulatePosterPaths(response);
+            PopulatePosterPaths(response.Results);
 
             return response;
         }
 
-        private void PopulatePosterPaths(NowPlayingResponseModel response)
+        private void PopulatePosterPaths(IEnumerable<MovieResponse> results)
         {
-            foreach (var movie in response.Results)
+            foreach (var result in results)
             {
-                if (!string.IsNullOrEmpty(movie.PosterPath))
-                {
-                    movie.PosterPath = $"{imageBaseUrl}{movie.PosterPath}";
-                }
-                else
-                {
-                    movie.PosterPath = "/img/poster.png"; // Use a placeholder image if no poster is available
-                }
+                PopulatePosterPaths(result);
+            }
+        }
+
+        private void PopulatePosterPaths(IMovieWithImages response)
+        {
+            if (!string.IsNullOrEmpty(response.PosterPath))
+            {
+                response.PosterPath = $"{imageBaseUrl}{response.PosterPath}";
+            }
+            else
+            {
+                response.PosterPath = "/img/poster.png"; // Use a placeholder image if no poster is available
+            }
+        }
+
+        private void PopulateBackdropPaths(IMovieWithImages response)
+        {
+            if (!string.IsNullOrEmpty(response.PosterPath))
+            {
+                response.BackdropPath = $"{imageBaseUrl}{response.BackdropPath}";
+            }
+            else
+            {
+                response.BackdropPath = "/img/backdrop.jpg"; // Use a placeholder image if no poster is available
             }
         }
 
@@ -63,19 +81,22 @@ namespace CodeChallenge.NowPlaying.Services
         {
             string url = "https://api.themoviedb.org/3/search/movie?region=BE&language=nl-BE";
 
-            var response = await _httpClient.GetFromJsonAsync<NowPlayingResponseModel>($"{url}&query={queryString}", jsonOptions, cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch search results.");
+            var response = await _httpClient.GetFromJsonAsync<NowPlayingResponseModel>(requestUri: $"{url}&query={queryString}", options: jsonOptions, cancellationToken: cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch search results.");
 
-            PopulatePosterPaths(response);
+            PopulatePosterPaths(response.Results);
 
             return response;
 
         }
 
-        public async Task<MovieDetailsResponse> GetMovieDetailsAsync(int movieId, CancellationToken cancellation = default)
+        public async Task<MovieDetailsResponse> GetMovieDetailsByIdAsync(int movieId, CancellationToken cancellation = default)
         {
             string url = $"https://api.themoviedb.org/3/movie/{movieId}";
 
-            var response = await _httpClient.GetFromJsonAsync<MovieDetailsResponse>(requestUri: url, cancellationToken: cancellation) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch movie details");
+            var response = await _httpClient.GetFromJsonAsync<MovieDetailsResponse>(requestUri: url, options: jsonOptions, cancellationToken: cancellation) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch movie details");
+
+            PopulatePosterPaths(response);
+            PopulateBackdropPaths(response);
 
             return response;
         }

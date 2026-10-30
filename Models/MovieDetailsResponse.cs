@@ -1,7 +1,7 @@
 ﻿namespace CodeChallenge.NowPlaying.Models
 {
 
-    public class MovieDetailsResponse
+    public class MovieDetailsResponse : IMovieWithImages
     {
         public bool Adult { get; set; }
         public string BackdropPath { get; set; } = string.Empty;

@@ -2,6 +2,7 @@
 
 @implements IDisposable
 @inject ITmdbService tmdbService
+@inject IJSRuntime JSRuntime
 
 @if (movie is not null)
 {
@@ -83,8 +84,8 @@
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content modal-background">
             <div class="modal-header">
-                <h5 class="modal-title" id="modal-title">Movie Title</h5>
-                <button type="button" data-bs-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="modal-title">@(movie?.Title ?? "Movie trailer")</h5>
+                <button type="button" data-bs-dismiss="modal" aria-label="Close" class="ms-auto">
                     <i class="bi bi-x" />
                 </button>
             </div>
@@ -123,6 +124,22 @@
         finally
         {
             isLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await using var jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/Components/Pages/MovieById.razor.js");
+
+        if (movieTrailer != null)
+        {
+            var url = $"https://www.youtube.be/embed/{movieTrailer.Key}";
+
+            await jsModule.InvokeVoidAsync(identifier: "initVideo", args: [url], cancellationToken: cts.Token);
+        }
+        else
+        {
+            await jsModule.InvokeVoidAsync(identifier: "initVideo", args: [string.Empty], cancellationToken: cts.Token);
         }
     }
 

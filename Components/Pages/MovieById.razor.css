@@ -19,7 +19,7 @@
 }
 .modal-background{
     background-color: var(--cf-theme-900);
-    background-color: var(--cf-light-color);
+    color: var(--cf-light-color);
 }
 
 .modal-header button {

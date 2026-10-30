@@ -40,7 +40,7 @@
 
 @code {
     List<MovieResponse>? favoriteMovies;
-    bool isLoading = true;
+    bool isLoading;
     CancellationTokenSource cts = new CancellationTokenSource();
 
     protected override async Task OnParametersSetAsync()
@@ -48,6 +48,7 @@
         // load favorites from localStorage service
         try
         {
+            isLoading = true;
             favoriteMovies = await localStorageService.GetFavoritesAsync(cts.Token);
         }
         catch (Exception ex)

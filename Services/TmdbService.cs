@@ -58,5 +58,24 @@ namespace CodeChallenge.NowPlaying.Services
                 }
             }
         }
+
+        /// <summary>
+        /// Search
+        /// </summary>
+        /// <param name="queryString"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpIOException"></exception>
+        public async Task<NowPlayingResponseModel> SearchAsync(string queryString, CancellationToken cancellationToken = default)
+        {
+            string url = "https://api.themoviedb.org/3/search/movie?region=BE&language=nl-BE";
+
+            var response = await _httpClient.GetFromJsonAsync<NowPlayingResponseModel>($"{url}&query={queryString}", jsonOptions, cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch search results.");
+
+            PopulatePosterPaths(response);
+
+            return response;
+
+        }
     }
 }

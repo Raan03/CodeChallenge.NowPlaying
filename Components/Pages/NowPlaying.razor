@@ -42,13 +42,14 @@
 @code {
     private NowPlayingResponseModel? nowPlayingMovies = null;
     private CancellationTokenSource cts = new CancellationTokenSource();
-    private bool isLoading = true;
+    private bool isLoading;
 
     protected override async Task OnInitializedAsync()
     {
 
         try
         {
+            isLoading = true;
             nowPlayingMovies = await tmdbService.GetNowPlayingMoviesAsync(1, cts.Token);
         }
         catch (Exception ex)

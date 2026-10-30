@@ -6,6 +6,6 @@ namespace CodeChallenge.NowPlaying.Services.Contracts
     {
         Task<NowPlayingResponseModel> GetNowPlayingMoviesAsync(int pageNumber, CancellationToken cancellationToken = default);
         Task<NowPlayingResponseModel> GetPopularMoviesAsync(int pageNumber, CancellationToken cancellationToken = default);
-
+        Task<NowPlayingResponseModel> SearchAsync(string queryString, CancellationToken cancellationToken = default);
     }
 }

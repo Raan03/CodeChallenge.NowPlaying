@@ -1,0 +1,95 @@
+﻿@page "/search"
+@implements IDisposable
+@inject ITmdbService tmdbService
+
+<div class="container-xxl py-3">
+    <h1>
+        <i class="bi bi-search text-secondary"></i>
+        Search
+    </h1>
+    <p class="lead italic">
+        Movies matching your search parameters
+    </p>
+    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+        @if (searchResults is null)
+        {
+            <div class="d-flex justify-content-center align-items-center">
+                @if (string.IsNullOrWhiteSpace(Query))
+                {
+                    <h2 class="text-muted">No search query provided...</h2>
+                }
+                else if (isLoading)
+                {
+                    <h2 class="text-muted">Loading...</h2>
+                }
+                else
+                {
+                    <h2 class="text-muted">Failed to load...</h2>
+                }
+            </div>
+        }
+        else
+        {
+            if (searchResults.TotalResults == 0)
+            {
+                <div class="d-flex justify-content-center align-items-center">
+                    <h2 class="text-muted">No results found for "@Query"</h2>
+                </div>
+            }
+            else
+            {
+                <h3 class="text-muted">@searchResults.TotalResults Results for "@Query":</h3>
+            }
+
+            @foreach (var movie in searchResults.Results)
+            {
+                <div class="col">
+                    <MovieCard Movie="@movie" />
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? Query { get; set; }
+
+    NowPlayingResponseModel? searchResults;
+    bool isLoading = true;
+    CancellationTokenSource cts = new CancellationTokenSource();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(Query))
+            {
+                isLoading = true;
+                searchResults = await tmdbService.SearchAsync(Query, cts.Token);
+            }
+        }
+        catch (Exception)
+        {
+            // Handle the exception appropriately
+            searchResults = null;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    public void Dispose()
+    {
+        if (cts != null)
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
+    }
+}

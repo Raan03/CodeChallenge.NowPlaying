@@ -1,4 +1,6 @@
-﻿namespace CodeChallenge.NowPlaying.Models
+﻿using CodeChallenge.NowPlaying.Models.Contracts;
+
+namespace CodeChallenge.NowPlaying.Models
 {
 
     public class MovieDetailsResponse : IMovieWithImages

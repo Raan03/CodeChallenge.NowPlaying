@@ -1,4 +1,4 @@
-﻿namespace CodeChallenge.NowPlaying.Models
+﻿namespace CodeChallenge.NowPlaying.Models.Contracts
 {
     public interface IMovieWithImages
     {

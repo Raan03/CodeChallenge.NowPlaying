@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using static System.Net.WebRequestMethods;
 using CodeChallenge.NowPlaying.Services.Contracts;
 using System.ComponentModel.DataAnnotations;
+using CodeChallenge.NowPlaying.Models.Contracts;
 
 namespace CodeChallenge.NowPlaying.Services
 {
@@ -89,16 +90,27 @@ namespace CodeChallenge.NowPlaying.Services
 
         }
 
-        public async Task<MovieDetailsResponse> GetMovieDetailsByIdAsync(int movieId, CancellationToken cancellation = default)
+        public async Task<MovieDetailsResponse> GetMovieDetailsByIdAsync(int movieId, CancellationToken cancellationToken = default)
         {
             string url = $"https://api.themoviedb.org/3/movie/{movieId}";
 
-            var response = await _httpClient.GetFromJsonAsync<MovieDetailsResponse>(requestUri: url, options: jsonOptions, cancellationToken: cancellation) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch movie details");
+            var response = await _httpClient.GetFromJsonAsync<MovieDetailsResponse>(requestUri: url, options: jsonOptions, cancellationToken: cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch movie details");
 
             PopulatePosterPaths(response);
             PopulateBackdropPaths(response);
 
             return response;
+        }
+
+        public async Task<VideoResult?> GetMovieTrailerAsync(int movieId, CancellationToken cancellationToken = default)
+        {
+            var url = $"https://api.themoviedb.org/3/movie/{movieId}/videos?language=en-US";
+
+            var response = await _httpClient.GetFromJsonAsync<MovieVideoResponse>(requestUri: url, options: jsonOptions, cancellationToken: cancellationToken) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch movie trailers");
+
+            var result = response?.Results.FirstOrDefault(d => d.Type.Contains("Trailer", StringComparison.OrdinalIgnoreCase) && d.Site.Contains("YouTube", StringComparison.OrdinalIgnoreCase));
+
+            return result;
         }
     }
 }

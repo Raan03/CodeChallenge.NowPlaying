@@ -34,5 +34,12 @@ namespace CodeChallenge.NowPlaying.Services.Contracts
         /// <returns></returns>
         /// <exception cref="HttpIOException"></exception>
         Task<MovieDetailsResponse> GetMovieDetailsByIdAsync(int movieId, CancellationToken cancellation = default);
+        /// <summary>
+        /// Gets a movie trailer for a movie
+        /// </summary>
+        /// <param name="movieId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<VideoResult?> GetMovieTrailerAsync(int movieId, CancellationToken cancellationToken = default);
     }
 }

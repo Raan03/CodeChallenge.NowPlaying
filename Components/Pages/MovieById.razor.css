@@ -17,6 +17,14 @@
     width: 100%;
     height: auto;
 }
-#moviedetails-rating{
+.modal-background{
+    background-color: var(--cf-theme-900);
+    background-color: var(--cf-light-color);
+}
 
+.modal-header button {
+    background-color: transparent;
+    color: var(--bs-warning);
+    border: none;
+    font-size: 2rem;
 }

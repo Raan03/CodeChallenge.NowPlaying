@@ -4,22 +4,11 @@ using Microsoft.JSInterop;
 
 namespace CodeChallenge.NowPlaying.Services
 {
-    public class LocalStorageService : ILocalStorageService
+    public class LocalStorageService(IJSRuntime jSRuntime) : ILocalStorageService
     {
         private readonly string _localStorageKeyFavorites = "favorites";
-        private readonly IJSRuntime _jSRuntime;
+        private readonly IJSRuntime _jSRuntime = jSRuntime;
 
-        public LocalStorageService(IJSRuntime jSRuntime)
-        {
-            _jSRuntime = jSRuntime;
-        }
-
-        /// <summary>
-        /// Saves the favorites to LocalStorage
-        /// </summary>
-        /// <param name="movies"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         public async Task SaveFavoritesAsync(List<MovieResponse> movies, CancellationToken cancellationToken = default)
         {
             try
@@ -33,14 +22,9 @@ namespace CodeChallenge.NowPlaying.Services
             }
         }
 
-        /// <summary>
-        /// Retrieves the Favorites from Local Storage
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         public async Task<List<MovieResponse>> GetFavoritesAsync(CancellationToken cancellationToken = default)
         {
-            List<MovieResponse> movies = new List<MovieResponse>();
+            List<MovieResponse> movies = [];
 
             try
             {
@@ -48,25 +32,19 @@ namespace CodeChallenge.NowPlaying.Services
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    movies = System.Text.Json.JsonSerializer.Deserialize<List<MovieResponse>>(result) ?? new List<MovieResponse>();
+                    movies = System.Text.Json.JsonSerializer.Deserialize<List<MovieResponse>>(result) ?? [];
                 }
 
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error retrieving favorites from local storage: {ex.Message}");
-                await SaveFavoritesAsync(new List<MovieResponse>(), cancellationToken);
+                await SaveFavoritesAsync([], cancellationToken);
             }
 
             return movies;
         }
 
-        /// <summary>
-        /// Add a movie to the favorites list in localStorage
-        /// </summary>
-        /// <param name="movieResponse"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         public async Task AddFavoriteAsync(MovieResponse movieResponse, CancellationToken cancellationToken = default)
         {
             var favorites = await GetFavoritesAsync(cancellationToken);
@@ -77,25 +55,13 @@ namespace CodeChallenge.NowPlaying.Services
             }
         }
 
-        /// <summary>
-        /// Removes a movie from favorites list in localStorage
-        /// </summary>
-        /// <param name="movie"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         public async Task RemoveFavoriteAsync(MovieResponse movie, CancellationToken cancellationToken = default)
         {
             var favorites = await GetFavoritesAsync(cancellationToken);
-            favorites = favorites.Where(d => d.Id != movie.Id).ToList();
+            favorites = [.. favorites.Where(d => d.Id != movie.Id)];
             await SaveFavoritesAsync(favorites, cancellationToken);
         }
 
-        /// <summary>
-        /// Is a certain movieId in our favoriteslist?
-        /// </summary>
-        /// <param name="movieId"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         public async Task<bool> IsFavoriteAsync(int movieId, CancellationToken cancellationToken = default)
         {
             var favorites = await GetFavoritesAsync(cancellationToken);

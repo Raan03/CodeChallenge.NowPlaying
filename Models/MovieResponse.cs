@@ -4,7 +4,7 @@
     {
         public bool Adult { get; set; }
         public string BackdropPath { get; set; } = string.Empty;
-        public List<int> GenreIds { get; set; } = new List<int>();
+        public List<int> GenreIds { get; set; } = [];
         public int Id { get; set; }
         public string OriginalLanguage { get; set; } = string.Empty;
         public string OriginalTitle { get; set; } = string.Empty;

@@ -9,7 +9,7 @@ namespace CodeChallenge.NowPlaying.Services
     public class TmdbService : ITmdbService
     {
         private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+        private readonly JsonSerializerOptions jsonOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
         };
@@ -59,13 +59,6 @@ namespace CodeChallenge.NowPlaying.Services
             }
         }
 
-        /// <summary>
-        /// Search
-        /// </summary>
-        /// <param name="queryString"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="HttpIOException"></exception>
         public async Task<NowPlayingResponseModel> SearchAsync(string queryString, CancellationToken cancellationToken = default)
         {
             string url = "https://api.themoviedb.org/3/search/movie?region=BE&language=nl-BE";
@@ -76,6 +69,15 @@ namespace CodeChallenge.NowPlaying.Services
 
             return response;
 
+        }
+
+        public async Task<MovieDetailsResponse> GetMovieDetailsAsync(int movieId, CancellationToken cancellation = default)
+        {
+            string url = $"https://api.themoviedb.org/3/movie/{movieId}";
+
+            var response = await _httpClient.GetFromJsonAsync<MovieDetailsResponse>(requestUri: url, cancellationToken: cancellation) ?? throw new HttpIOException(HttpRequestError.InvalidResponse, "Failed to fetch movie details");
+
+            return response;
         }
     }
 }

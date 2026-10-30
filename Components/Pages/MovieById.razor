@@ -22,7 +22,8 @@
     [Parameter]
     public int MovieId { get; set; }
 
-    CancellationTokenSource cts = new CancellationTokenSource();
+    private MovieDetailsResponse? movie;
+    private CancellationTokenSource cts = new CancellationTokenSource();
 
     protected override async Task OnParametersSetAsync()
     {
